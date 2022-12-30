@@ -61,9 +61,21 @@ We are only interested in understanding if it is possible to have the approach I
 
 ## 📁 Solution Structure
 
-There are 2 "engine" projects:
+There are 2 core projects:
 
-- `FooSerializer.Core`: contains the core interfaces and classes, like `IFooSerializer` (core serialization methods) and `IFooFormatterNet7` (that derives from `IFooSerializer` and adds optimized .NET 7 methods), on top of the global `Foo` static class that resembles 
+- `FooPack.Core`: contains the core interfaces and classes, like `IFooPackFormatter` (standard serialization methods) and `IFooPackFormatterNet7` (derives from `IFooSerializer` and adds optimized .NET 7 methods), on top of the global `FooPackSerializer` static class that resembles `MemoryPackSerializer`, so that `MemoryPackSerializer.Serialize(obj)` -> `FooPackSerializer.Serialize(obj)`
+- `FooPack`: contains the source generator
+
+There are 3 library projects:
+- `MyLibNetStandard21`: is an intermediate lib targeting .NET Standard 2.1. It contains only 1 class which has the `[FooPackable]` attribute, so the generator will run only for .NET Standard 2.1
+- `MyLibNet7`: is an intermediate lib targeting .NET 7. It contains only 1 class which has the `[FooPackable]` attribute, so the generator will run only for .NET 7
+- `MyLibMultiTarget`: is an intermediate lib targeting both .NET Standard 2.1 and .NET 7. It contains only 1 class which has the `[FooPackable]` attribute, so here the generator will run for both .NET Standard 2.1 and for .NET 7 (generating 2 different dll files)
+
+Then there are 2 console apps to test the results:
+- `TestAppNet6`: is a console app targeting .NET 6 (so, compatible only with .NET Standard 2.1). It contains 1 class which has the `[FooPackable]` attribute, so here the generator will run for .NET 6. The console app tries to "serialize" the local class, the class in the `MyLibNetStandard21` project and the one in the `MyLibMultiTarget` project
+- `TestAppNet7`: is a console app targeting .NET 7 (so, compatible with .NET Standard 2.1 AND with .NET 7). It contains 1 class which has the `[FooPackable]` attribute, so here the generator will run for .NET 7 only. The console app tries to "serialize" the local class, the class in the `MyLibNetStandard21` project, the one in the `MyLibNet7` project and the one in the `MyLibMultiTarget` project
+
+Follow for the results.
 
 
 ## 🏆 Results
