@@ -18,13 +18,15 @@ In particular this is the issue:
 > 2) any .NET Standard 2.1 package should work with any concrete .NET version that is compatible with such 2.1 standard version (which includes .NET 3.0, 3.1, 5.0, 6.0 and 7.0)
 > 3) currently this is not the case, and the dependency is broken, since any package working with MemoryPack MUST multi-target to .NET 7 explicitely to be able to function, which is non-standard behaviour
 
-Basically this:
+Basically this in general must work:
 
-`.NET 7 app` --> `.NET Standard 2.1 lib` --> `.NET Standard 2.1 lib`
+✅ `.NET 7 app` --> ✅ `.NET Standard 2.1 lib` --> ✅ `.NET Standard 2.1 lib`
 
-should work but currently, with MemoryPack it does not:
+But currently, with MemoryPack, if in the middle lib you generate a formatter, it does not:
 
-`.NET 7 app` --> `.NET Standard 2.1 lib` --> `MemoryPack (.NET Standard 2.1 lib)`
+⛔ `.NET 7 app` --> ✅ `.NET Standard 2.1 lib` --> ✅ `MemoryPack (.NET Standard 2.1 lib)`
+
+because the code generated in a .NET Standard 2.1 project is not compatible with a .NET 7 app (instead it should).
 
 
 ## 🎉 A Solution
@@ -41,7 +43,7 @@ And so on, you can read the full details there.
 
 Now, probably because I haven't been able to explain myself clearly, MemoryPack's author responded by saying that my solution was not doable.
 
-Also, since I haven't yet played with source generators (but only read something here and there), maybe I was missing something or maybe I just explained myself badl.
+Also, since I had never played with source generators (but only read something here and there), maybe I was missing something or maybe I just explained myself badly 🤷‍♂️.
 
 So anyway I created this to actually try my approach and showcase what I meant.
 
@@ -64,4 +66,12 @@ There are 2 "engine" projects:
 - `FooSerializer.Core`: contains the core interfaces and classes, like `IFooSerializer` (core serialization methods) and `IFooFormatterNet7` (that derives from `IFooSerializer` and adds optimized .NET 7 methods), on top of the global `Foo` static class that resembles 
 
 
-## 🏁 Results
+## 🏆 Results
+
+It works!
+
+It seems to be possible to generate code that works everywhere, and is adaptively optimized when possible (eg: when the .NET runtime allows it).
+
+If we run the `TestConsoleNet6` we can see that it's using the ".NET Standard 2.1 code":
+
+But if we run the `TestConsoleNet7` we can see that it's using the ".NET Standard 2.1 code" only for the project that has been compiled targeting .NET Standard 2.1, but is instead using the "optimized .NET 7 code" for the projects that has been compiled targeting either .NET 7 directly, or with multi-targeting (.NET Standard 2.1 + .NET 7).
