@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<LangVersion>Latest</LangVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\FooPack.Core\FooPack.Core.csproj" />
+		<ProjectReference Include="..\FooPack\FooPack.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"  />
+	</ItemGroup>
+
+</Project>

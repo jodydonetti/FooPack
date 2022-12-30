@@ -38,7 +38,7 @@ internal static class FooPackGeneratorHelper
 			// IMPLEMENT IFooPackFormatter
 			sb.AppendLine(@"
 public string? Serialize(object? obj) {
-	return ""executing normal .NET Standard 2 code..."";
+	return ""executing normal .NET Standard code..."";
 }");
 
 			// IMPLEMENT IFooPackFormatterNet7
