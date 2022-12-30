@@ -72,6 +72,16 @@ It works!
 
 It seems to be possible to generate code that works everywhere, and is adaptively optimized when possible (eg: when the .NET runtime allows it).
 
-If we run the `TestConsoleNet6` we can see that it's using the ".NET Standard 2.1 code":
+If we run the `TestConsoleNet6` (targeting .NET 6, which is compatible with .NET Standard 2.1) this is the result:
 
-But if we run the `TestConsoleNet7` we can see that it's using the ".NET Standard 2.1 code" only for the project that has been compiled targeting .NET Standard 2.1, but is instead using the "optimized .NET 7 code" for the projects that has been compiled targeting either .NET 7 directly, or with multi-targeting (.NET Standard 2.1 + .NET 7).
+![image](https://user-images.githubusercontent.com/1010086/210086713-d848bb3f-b137-4f72-95a0-cde2141d27e9.png)
+
+We can see that it's using the "normal .NET Standard code", for both the local class (`MyClassNet6`), the class in the .NET Standard 2.1 lib (`MyClassInExtLibNetStandard21`) and for the one in the lib with multi-targeting (`MyClassInExtLibMultiTarget`).
+
+But if we run the `TestConsoleNet7` (targeting specifically .NET 7) this is the result:
+
+![image](https://user-images.githubusercontent.com/1010086/210086922-396fb265-3135-45cb-b888-54da319abf06.png)
+
+We can see that it's using the "optimized .NET 7 code" everywhere automatically, for every project that target either .NET 7 directly, or with multi-targeting (.NET Standard 2.1 + .NET 7).
+
+The only exception is for the project where the generator run targeting only .NET Standard 2.1 (`MyClassInExtLibNetStandard21`): but contrary to what currently happens in MemroyPack, it has been able to call the "normal" code without crashing.
